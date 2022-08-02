@@ -1,0 +1,78 @@
+.App-header {
+  background-color: #282c34;
+  height: 80px;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(20px);
+  color: white;
+}
+
+.App {
+  display: grid;
+  justify-content: center;
+  height: 100vh;
+  background-color: #ffffff;
+}
+
+.App .logIn {
+  width: 500px;
+  height: 350px;
+  border-radius: 10px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  background-color: #282c34;
+  justify-self: center;
+}
+
+.inputs {
+  margin: 30px;
+  padding: 30px;
+}
+
+.inputs input {
+  margin: 10px;
+  width: 150px;
+  height: 30px;
+  border: 2px solid white;
+  background-color: transparent;
+  border-radius: 10px;
+  color: white;
+}
+
+.inputs input:hover {
+  box-shadow: 5px 5px #1f2228;
+}
+
+.inputs input:focus {
+  outline: none;
+}
+
+.inputs label {
+  margin: 10px;
+  color: white;
+}
+
+.inputs select {
+  margin: 10px;
+  border-radius: 10px;
+}
+
+.inputs select:hover {
+  box-shadow: 5px 5px #1f2228;
+}
+
+.logIn button {
+  border-radius: 10px;
+  background-color: #282c34;
+  color: white;
+  height: 40px;
+  font-size: calc(20px);
+}
+
+.logIn button:hover {
+  box-shadow: 5px 5px #1f2228;
+}
