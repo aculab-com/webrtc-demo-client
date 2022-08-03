@@ -1,3 +1,12 @@
+:root {
+  --primary_colour: #282c34;
+  --secondary_colour: #ffffff;
+  --input_colour: #404754;
+  --input_hover_colour: #5c6679;
+  --shadow_colour: #1f2228;
+  --light_text_colour: #ffffff;
+}
+
 .App-header {
   background-color: #282c34;
   height: 80px;
@@ -7,14 +16,14 @@
   align-items: center;
   justify-content: center;
   font-size: calc(20px);
-  color: white;
+  color: var(--secondary_colour);
 }
 
 .App {
   display: grid;
   justify-content: center;
   height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--secondary_colour);
 }
 
 .App .logIn {
@@ -24,7 +33,7 @@
   display: grid;
   justify-content: center;
   align-items: center;
-  background-color: #282c34;
+  background-color: var(--primary_colour);
   justify-self: center;
 }
 
@@ -37,14 +46,17 @@
   margin: 10px;
   width: 150px;
   height: 30px;
-  border: 2px solid white;
-  background-color: transparent;
+  border: 2px solid var(--secondary_colour);
+  background-color: var(--input_colour);
   border-radius: 10px;
-  color: white;
+  color: var(--light_text_colour);
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .inputs input:hover {
-  box-shadow: 5px 5px #1f2228;
+  box-shadow: 5px 5px var(--shadow_colour);
+  background-color: var(--input_hover_colour);
 }
 
 .inputs input:focus {
@@ -53,26 +65,31 @@
 
 .inputs label {
   margin: 10px;
-  color: white;
+  color: var(--light_text_colour);
 }
 
 .inputs select {
   margin: 10px;
   border-radius: 10px;
+  background-color: var(--input_colour);
+  color: var(--light_text_colour);
 }
 
 .inputs select:hover {
-  box-shadow: 5px 5px #1f2228;
+  box-shadow: 5px 5px var(--shadow_colour);
+  background-color: var(--input_hover_colour);
 }
 
 .logIn button {
   border-radius: 10px;
-  background-color: #282c34;
-  color: white;
+  background-color: var(--primary_colour);
+  color: var(--light_text_colour);
   height: 40px;
   font-size: calc(20px);
 }
 
 .logIn button:hover {
-  box-shadow: 5px 5px #1f2228;
+  box-shadow: 5px 5px var(--shadow_colour);
+  background-color: var(--input_hover_colour);
+
 }
