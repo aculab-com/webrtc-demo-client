@@ -6,20 +6,23 @@ const SOCKET_CONNECT_URL = 'http://localhost:3500';
 let socket: Socket;
 
 function App() {
-  const[username, setUsername] = useState('');
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
     if (!socket) {
       socket = io(SOCKET_CONNECT_URL);
       socket.on('response', (data) => {
         console.log('1111 server response to registration', data);
-      })
-    };
+      });
+    }
   }, []);
 
   const register = () => {
-    let logLevel = document.getElementById('logLevel') as HTMLSelectElement;
-    let data = { username: username, logLevel: logLevel.value}
+    if (username.length < 1) {
+      alert('username cannot be empty');
+    }
+    const logLevel = document.getElementById('logLevel') as HTMLSelectElement;
+    const data = { username: username, logLevel: logLevel.value };
     console.log('registering user:', data);
     socket.emit('register', data);
   };
@@ -27,15 +30,17 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1 className='App-title'>WebRTC Demo</h1>
+        <h1 className="App-title">WebRTC Demo</h1>
       </header>
-      <div className='logIn'>
-        <div className='inputs'>
+      <div className="logIn">
+        <div className="inputs">
           <input
             id="username"
             type="text"
-            placeholder='Username...'
-            onChange={(event) => {setUsername(event.target.value)}}
+            placeholder="Username..."
+            onChange={(event) => {
+              setUsername(event.target.value);
+            }}
           />
           <div>
             <label htmlFor="logLevel">Log Level:</label>
@@ -52,7 +57,7 @@ function App() {
             </select>
           </div>
         </div>
-      <button onClick={register}>Register</button>
+        <button onClick={register}>Register</button>
       </div>
     </div>
   );
