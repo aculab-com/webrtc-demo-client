@@ -6,7 +6,9 @@ const SOCKET_CONNECT_URL = 'http://localhost:3500';
 let socket: Socket;
 
 function App() {
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
+  // const [registerPressed, setRegisterPressed] = useState(false);
+  const [client, setClient] = useState(false);
 
   useEffect(() => {
     if (!socket) {
@@ -17,21 +19,19 @@ function App() {
     }
   }, []);
 
-  const register = () => {
-    if (username.length < 1) {
-      alert('username cannot be empty');
+  const register = (username: string) => {
+    if (username) {
+      const logLevel = document.getElementById('logLevel') as HTMLSelectElement;
+      const data = { username: username, logLevel: logLevel.value };
+      console.log('registering user:', data);
+      socket.emit('register', data);
     }
-    const logLevel = document.getElementById('logLevel') as HTMLSelectElement;
-    const data = { username: username, logLevel: logLevel.value };
-    console.log('registering user:', data);
-    socket.emit('register', data);
   };
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1 className="App-title">WebRTC Demo</h1>
-      </header>
+  const RegisterComponent = () => {
+    const [username, setUsername] = useState('');
+    const [registerPressed, setRegisterPressed] = useState(false);
+    return (
       <div className="logIn">
         <div className="inputs">
           <input
@@ -42,6 +42,15 @@ function App() {
               setUsername(event.target.value);
             }}
           />
+          {!username && registerPressed ? (
+            <div>
+              <b>Username is required</b>
+            </div>
+          ) : (
+            <div>
+              <br></br>
+            </div>
+          )}
           <div>
             <label htmlFor="logLevel">Log Level:</label>
             <select name="logLevel" id="logLevel">
@@ -57,8 +66,30 @@ function App() {
             </select>
           </div>
         </div>
-        <button onClick={register}>Register</button>
+        <button
+          onClick={() => {
+            setRegisterPressed(true);
+            register(username);
+          }}
+        >
+          Register
+        </button>
       </div>
+    );
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1 className="App-title">WebRTC Demo</h1>
+      </header>
+      {!client ? (
+        <RegisterComponent />
+      ) : (
+        <div>
+          <br></br>
+        </div>
+      )}
     </div>
   );
 }

@@ -26,7 +26,7 @@
   background-color: var(--secondary_colour);
 }
 
-.App .logIn {
+.logIn {
   width: 500px;
   height: 350px;
   border-radius: 10px;
@@ -63,6 +63,12 @@
   outline: none;
 }
 
+.inputs b {
+  color: red;
+  margin: 10px;
+  font-size: 14px;
+}
+
 .inputs label {
   margin: 10px;
   color: var(--light_text_colour);
@@ -86,6 +92,7 @@
   color: var(--light_text_colour);
   height: 40px;
   font-size: calc(20px);
+  margin-bottom: 50px;
 }
 
 .logIn button:hover {

@@ -11,6 +11,6 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "prettier/prettier": 2
+    "prettier/prettier": 1
   }
 }
