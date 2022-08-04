@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 import './App.css';
-// import InputField from './components/InputField';
+
+const SOCKET_CONNECT_URL = 'http://localhost:3500';
+let socket: Socket;
 
 function App() {
+  const[username, setUsername] = useState('');
+
+  useEffect(() => {
+    if (!socket) {
+      socket = io(SOCKET_CONNECT_URL);
+      socket.on('response', (data) => {
+        console.log('1111 server response to registration', data);
+      })
+    };
+  }, []);
+
+  const register = () => {
+    let logLevel = document.getElementById('logLevel') as HTMLSelectElement;
+    let data = { username: username, logLevel: logLevel.value}
+    console.log('registering user:', data);
+    socket.emit('register', data);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -10,11 +31,13 @@ function App() {
       </header>
       <div className='logIn'>
         <div className='inputs'>
+          <input
+            id="username"
+            type="text"
+            placeholder='Username...'
+            onChange={(event) => {setUsername(event.target.value)}}
+          />
           <div>
-            {/* <label htmlFor="username">Username:</label> */}
-            <input id="username" type="text" placeholder='Username...' />
-          </div>
-          <div className='logLevel'>
             <label htmlFor="logLevel">Log Level:</label>
             <select name="logLevel" id="logLevel">
               <option value="0">0</option>
@@ -29,7 +52,7 @@ function App() {
             </select>
           </div>
         </div>
-      <button>Register</button>
+      <button onClick={register}>Register</button>
       </div>
     </div>
   );

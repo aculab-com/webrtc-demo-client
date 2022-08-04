@@ -2,6 +2,18 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Install
+
+In the root folder run:
+
+```terminal
+npm install
+```
+
+## Connect to server using sockets
+
+In app.tsx file change SOCKET_CONNECT_URL to your server url:port e.g. 'http://localhost:3500'
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -13,11 +25,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `npm run build`
 

@@ -91,5 +91,5 @@
 .logIn button:hover {
   box-shadow: 5px 5px var(--shadow_colour);
   background-color: var(--input_hover_colour);
-
+  cursor: pointer;
 }
