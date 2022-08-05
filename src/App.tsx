@@ -1,28 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import AculabCloudClient from 'aculab-webrtc';
 import './App.css';
 
 const SOCKET_CONNECT_URL = 'http://localhost:3500';
 let socket: Socket;
 
+const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 function App() {
-  // const [username, setUsername] = useState('');
-  // const [registerPressed, setRegisterPressed] = useState(false);
-  const [client, setClient] = useState(false);
+  const [user, setUser] = useState();
+  const [client, setClient] = useState();
+  const [warningMessage, setWarningMessage] = useState('');
 
   useEffect(() => {
     if (!socket) {
       socket = io(SOCKET_CONNECT_URL);
-      socket.on('response', (data) => {
+      socket.on('register_user_response', (data) => {
         console.log('1111 server response to registration', data);
+        if (data.username) {
+          setUser(data);
+          console.log(
+            'data for AculabCloudClient',
+            data.cloudRegionId,
+            data.webrtcAccessKey,
+            data.username,
+            data.logLevel
+          );
+          // setClient(
+          //   new AculabCloudClient(
+          //     data.cloudRegionId,
+          //     data.webrtcAccessKey,
+          //     data.username,
+          //     data.logLevel
+          //   )
+          // );
+          console.log('user:', user);
+        } else {
+          setWarningMessage(capitalizeFirstLetter(data.message));
+        }
       });
     }
   }, []);
 
-  const register = (username: string) => {
+  const register = (username: string, logLevel: string) => {
     if (username) {
-      const logLevel = document.getElementById('logLevel') as HTMLSelectElement;
-      const data = { username: username, logLevel: logLevel.value };
+      const data = { username: username, logLevel: logLevel };
       console.log('registering user:', data);
       socket.emit('register', data);
     }
@@ -48,7 +73,7 @@ function App() {
             </div>
           ) : (
             <div>
-              <br></br>
+              <b>{warningMessage}</b>
             </div>
           )}
           <div>
@@ -68,8 +93,12 @@ function App() {
         </div>
         <button
           onClick={() => {
+            const logLevel = document.getElementById(
+              'logLevel'
+            ) as HTMLSelectElement;
             setRegisterPressed(true);
-            register(username);
+            setWarningMessage('');
+            register(username, logLevel.value);
           }}
         >
           Register
@@ -81,9 +110,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1 className="App-title">WebRTC Demo</h1>
+        <h1 className="App-title">Aculab WebRTC Demo</h1>
       </header>
-      {!client ? (
+      {!user ? (
         <RegisterComponent />
       ) : (
         <div>

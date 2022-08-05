@@ -1,0 +1,1 @@
+declare module 'aculab-webrtc';
