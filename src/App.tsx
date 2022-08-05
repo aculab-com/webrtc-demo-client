@@ -6,6 +6,11 @@ import './App.css';
 const SOCKET_CONNECT_URL = 'http://localhost:3500';
 let socket: Socket;
 
+/**
+ * Convert first letter to upper case
+ * @param {string} string any string
+ * @returns {string} string with first letter in upper case
+ */
 const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
@@ -17,28 +22,24 @@ function App() {
 
   useEffect(() => {
     if (!socket) {
+      // create socket
       socket = io(SOCKET_CONNECT_URL);
+      // server response to registering new user
       socket.on('register_user_response', (data) => {
-        console.log('1111 server response to registration', data);
+        // user registered on server
         if (data.username) {
           setUser(data);
-          console.log(
-            'data for AculabCloudClient',
-            data.cloudRegionId,
-            data.webrtcAccessKey,
-            data.username,
-            data.logLevel
+          // create new AculabCloudClient
+          setClient(
+            new AculabCloudClient(
+              data.cloudRegionId,
+              data.webrtcAccessKey,
+              data.username,
+              data.logLevel
+            )
           );
-          // setClient(
-          //   new AculabCloudClient(
-          //     data.cloudRegionId,
-          //     data.webrtcAccessKey,
-          //     data.username,
-          //     data.logLevel
-          //   )
-          // );
-          console.log('user:', user);
         } else {
+          // if user not registered, display server response
           setWarningMessage(capitalizeFirstLetter(data.message));
         }
       });
@@ -112,11 +113,13 @@ function App() {
       <header className="App-header">
         <h1 className="App-title">Aculab WebRTC Demo</h1>
       </header>
-      {!user ? (
+      {!client ? (
         <RegisterComponent />
       ) : (
         <div>
-          <br></br>
+          <button onClick={() => console.log('this is client:', client)}>
+            Press me
+          </button>
         </div>
       )}
     </div>
