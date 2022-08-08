@@ -19,6 +19,7 @@ function App() {
   const [user, setUser] = useState();
   const [client, setClient] = useState();
   const [warningMessage, setWarningMessage] = useState('');
+  const [incomingCall, setIncomingCall] = useState(false);
 
   useEffect(() => {
     if (!socket) {
@@ -93,6 +94,7 @@ function App() {
           </div>
         </div>
         <button
+          className="mainScreenButton"
           onClick={() => {
             const logLevel = document.getElementById(
               'logLevel'
@@ -104,6 +106,101 @@ function App() {
         >
           Register
         </button>
+        {/* <button
+          className="mainScreenButton"
+          onClick={() => {
+            setIncomingCall(true);
+          }}
+        >
+          display incoming call
+        </button> */}
+      </div>
+    );
+  };
+
+  const VideoDisplay = () => {
+    const [callId, setCallId] = useState('');
+    const [callPressed, setCallPressed] = useState(false);
+
+    return (
+      <div className="videoDisplayWrapper">
+        <div className="inputs">
+          <input
+            id="callId"
+            type="text"
+            placeholder="Call ID..."
+            onChange={(event) => {
+              setCallId(event.target.value);
+            }}
+          />
+          {!callId && callPressed ? (
+            <div>
+              <b>Username is required</b>
+            </div>
+          ) : (
+            <div>
+              <b>{warningMessage}</b>
+            </div>
+          )}
+          <div>
+            <label htmlFor="logLevel">Call:</label>
+            <select name="logLevel" id="logLevel">
+              <option value="client">Client</option>
+              <option value="service">Service</option>
+            </select>
+          </div>
+        </div>
+        <button
+          className="mainScreenButton"
+          onClick={() => {
+            setCallPressed(true);
+            console.log('call pressed');
+          }}
+        >
+          Call
+        </button>
+      </div>
+    );
+  };
+
+  type IncomingCall = {
+    caller: string;
+  };
+
+  const IncomingPopUp = (props: IncomingCall) => {
+    return (
+      <div
+        className={
+          incomingCall
+            ? 'incomingCallWrapper-unfolded'
+            : 'incomingCallWrapper-folded'
+        }
+      >
+        <div className="incomingCallText">
+          <b>{props.caller} is calling</b>
+        </div>
+        <div className="incomingCallButtonWrap">
+          <button
+            className="incomingCallButton"
+            style={{ backgroundColor: 'green' }}
+            onClick={() => {
+              console.log('incoming call accepted');
+              setIncomingCall(false);
+            }}
+          >
+            Accept
+          </button>
+          <button
+            className="incomingCallButton"
+            style={{ backgroundColor: 'red' }}
+            onClick={() => {
+              console.log('incoming call rejected');
+              setIncomingCall(false);
+            }}
+          >
+            Reject
+          </button>
+        </div>
       </div>
     );
   };
@@ -113,15 +210,8 @@ function App() {
       <header className="App-header">
         <h1 className="App-title">Aculab WebRTC Demo</h1>
       </header>
-      {!client ? (
-        <RegisterComponent />
-      ) : (
-        <div>
-          <button onClick={() => console.log('this is client:', client)}>
-            Press me
-          </button>
-        </div>
-      )}
+      <IncomingPopUp caller="Tom" />
+      {!client ? <RegisterComponent /> : <VideoDisplay />}
     </div>
   );
 }

@@ -5,6 +5,7 @@
   --input_hover_colour: #5c6679;
   --shadow_colour: #1f2228;
   --light_text_colour: #ffffff;
+  --red: #f43030;
 }
 
 .App-header {
@@ -64,7 +65,7 @@
 }
 
 .inputs b {
-  color: red;
+  color: var(--red);
   margin: 10px;
   font-size: 14px;
 }
@@ -86,7 +87,7 @@
   background-color: var(--input_hover_colour);
 }
 
-.logIn button {
+.mainScreenButton {
   border-radius: 10px;
   background-color: var(--primary_colour);
   color: var(--light_text_colour);
@@ -95,8 +96,70 @@
   margin-bottom: 50px;
 }
 
-.logIn button:hover {
+.mainScreenButton:hover {
   box-shadow: 5px 5px var(--shadow_colour);
   background-color: var(--input_hover_colour);
   cursor: pointer;
+}
+
+.incomingCallWrapper-folded {
+  justify-self: center;
+  position: absolute;
+  top: 75px;
+}
+
+.incomingCallWrapper-folded div {
+  display: none;
+}
+
+.incomingCallWrapper-unfolded {
+  width: 500px;
+  height: 100px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary_colour);
+  justify-self: center;
+  justify-content: center;
+  border: 2px solid var(--secondary_colour);
+  position: absolute;
+  top: 70px;
+  /* transition: height 250ms; */
+  opacity: 90%;
+}
+
+.incomingCallText {
+  flex: 2;
+  font-size: calc(20px);
+  justify-content: center;
+  display: flex;
+  margin-top: 7px;
+  color: var(--red);
+}
+
+.incomingCallButtonWrap {
+  justify-content: center;
+  display: flex;
+}
+
+.incomingCallButton {
+  border-radius: 10px;
+  color: var(--light_text_colour);
+  height: 40px;
+  width: 150px;
+  font-size: calc(20px);
+  margin-bottom: 10px;
+  margin-inline: 30px;
+}
+
+.videoDisplayWrapper {
+  width: 500px;
+  height: 350px;
+  border-radius: 10px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primary_colour);
+  justify-self: center;
+  transition: width 200ms;
 }
