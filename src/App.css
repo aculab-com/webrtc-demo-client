@@ -20,6 +20,21 @@
   color: var(--secondary_colour);
 }
 
+.App-header h1 {
+  margin-bottom: 0px;
+}
+
+.App-header b {
+  background-color: #282c34;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(20px);
+  color: var(--secondary_colour);
+}
+
 .App {
   display: grid;
   justify-content: center;
@@ -96,6 +111,23 @@
   margin-bottom: 50px;
 }
 
+.videoButton {
+  border-radius: 10px;
+  background-color: var(--primary_colour);
+  color: var(--light_text_colour);
+  height: 40px;
+  width: 140px;
+  font-size: calc(20px);
+  margin-bottom: 50px;
+  margin-inline: 10px;
+}
+
+.videoButton:hover {
+  box-shadow: 5px 5px var(--shadow_colour);
+  background-color: var(--input_hover_colour);
+  cursor: pointer;
+}
+
 .mainScreenButton:hover {
   box-shadow: 5px 5px var(--shadow_colour);
   background-color: var(--input_hover_colour);
@@ -124,7 +156,6 @@
   border: 2px solid var(--secondary_colour);
   position: absolute;
   top: 70px;
-  /* transition: height 250ms; */
   opacity: 90%;
 }
 
@@ -152,7 +183,7 @@
   margin-inline: 30px;
 }
 
-.videoDisplayWrapper {
+.popUpUiWrapper {
   width: 500px;
   height: 350px;
   border-radius: 10px;
@@ -162,4 +193,48 @@
   background-color: var(--primary_colour);
   justify-self: center;
   transition: width 200ms;
+  position: absolute;
+  top: 30vh;
+}
+
+.videoDisplayWindow {
+  border-radius: 10px;
+  margin-top: 20px;
+  display: flex;
+  flex: 2;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primary_colour);
+  justify-self: center;
+  transition: width 200ms;
+  max-width: 1000px;
+  max-height: 570px;
+}
+
+.videoButtonsWrap {
+  display: flex;
+}
+
+.videoDisplay video {
+  border-radius: 15px;
+  max-height: 400px;
+  max-width: 400px;
+  margin: 20px;
+}
+
+.videoDisplayStatsWrap {
+  margin-bottom: 20px;
+  display: flex;
+  flex: 2;
+  color: var(--secondary_colour);
+}
+
+.videoDisplayWrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.videoDisplayStat {
+  width: 200px;
 }
