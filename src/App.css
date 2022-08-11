@@ -10,7 +10,7 @@
 
 .App-header {
   background-color: #282c34;
-  height: 80px;
+  height: 100px;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -21,10 +21,11 @@
 }
 
 .App-header h1 {
-  margin-bottom: 0px;
+  margin-bottom: 10px;
+  margin-top: 0px;
 }
 
-.App-header b {
+.App-header div {
   background-color: #282c34;
   width: 100vw;
   display: flex;
@@ -33,6 +34,23 @@
   justify-content: center;
   font-size: calc(20px);
   color: var(--secondary_colour);
+}
+
+.unregisterButton {
+  background-color: var(--primary_colour);
+  color: var(--red);
+  border-radius: 10px;
+  border-color: var(--red);
+  margin-inline: 20px;
+  width: 100px;
+}
+
+.unregisterButton:hover {
+  box-shadow: 5px 5px var(--shadow_colour);
+  background-color: var(--red);
+  color: var(--light_text_colour);
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .App {
@@ -73,6 +91,7 @@
 .inputs input:hover {
   box-shadow: 5px 5px var(--shadow_colour);
   background-color: var(--input_hover_colour);
+  font-weight: bold;
 }
 
 .inputs input:focus {
@@ -95,11 +114,14 @@
   border-radius: 10px;
   background-color: var(--input_colour);
   color: var(--light_text_colour);
+  width: 70px;
+  text-align: center;
 }
 
 .inputs select:hover {
   box-shadow: 5px 5px var(--shadow_colour);
   background-color: var(--input_hover_colour);
+  font-weight: bold;
 }
 
 .mainScreenButton {
@@ -126,12 +148,14 @@
   box-shadow: 5px 5px var(--shadow_colour);
   background-color: var(--input_hover_colour);
   cursor: pointer;
+  font-weight: bold;
 }
 
 .mainScreenButton:hover {
   box-shadow: 5px 5px var(--shadow_colour);
   background-color: var(--input_hover_colour);
   cursor: pointer;
+  font-weight: bold;
 }
 
 .incomingCallWrapper-folded {

@@ -141,13 +141,21 @@ function App() {
     }
   }, []);
 
-  const register = (username: string, logLevel: string) => {
+  function register(username: string, logLevel: string) {
     if (username) {
       const data = { username: username, logLevel: logLevel };
       console.log('registering user:', data);
       socket.emit('register', data);
     }
-  };
+  }
+
+  function unregister() {
+    if (client) {
+      client.disableIncoming();
+      setClient(null);
+      // TODO delete user from the server
+    }
+  }
 
   function incomingState(state: undefined) {
     console.log('incomingState', state);
@@ -176,7 +184,7 @@ function App() {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function newCall(obj: InboundCallObj) {
+  function newCall(obj: InboundCallObj) {
     console.log('newCall fired up', obj.call);
     console.log('newCall fired up 222', obj);
     setCallerId(obj.from);
@@ -430,10 +438,18 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1 className="App-title">Aculab WebRTC Demo</h1>
+
         {!client ? (
-          <b>Registration</b>
+          <div>
+            <b>Registration</b>
+          </div>
         ) : (
-          <b>Registered Client: {user?.username}</b>
+          <div>
+            <b>Registered Client: {user?.username}</b>
+            <button className="unregisterButton" onClick={unregister}>
+              Unregister
+            </button>
+          </div>
         )}
       </header>
       <IncomingPopUp caller={callerId} />
