@@ -138,6 +138,10 @@ function App() {
           setWarningMessage(capitalizeFirstLetter(data.message));
         }
       });
+      socket.on('unregister_user_response', async (data) => {
+        // user registered on server
+        console.log('unregister_user_response', data);
+      });
     }
   }, []);
 
@@ -152,8 +156,9 @@ function App() {
   function unregister() {
     if (client) {
       client.disableIncoming();
+      socket.emit('unregister_user', user?.username);
       setClient(null);
-      // TODO delete user from the server
+      setUser(undefined);
     }
   }
 
@@ -445,10 +450,10 @@ function App() {
           </div>
         ) : (
           <div>
-            <b>Registered Client: {user?.username}</b>
             <button className="unregisterButton" onClick={unregister}>
               Unregister
             </button>
+            <b>Registered Client: {user?.username}</b>
           </div>
         )}
       </header>
