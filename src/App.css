@@ -174,10 +174,13 @@
   display: flex;
   flex-direction: column;
   background-color: var(--primary_colour);
-  justify-self: center;
   justify-content: center;
   border: 2px solid var(--secondary_colour);
   position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
   top: 70px;
   opacity: 90%;
 }
@@ -214,10 +217,13 @@
   justify-content: center;
   align-items: center;
   background-color: var(--primary_colour);
-  justify-self: center;
   transition: width 200ms;
   position: absolute;
   top: 30vh;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .videoDisplayWindow {
@@ -229,10 +235,13 @@
   justify-content: center;
   align-items: center;
   background-color: var(--primary_colour);
-  justify-self: center;
   transition: width 200ms;
   max-width: 1000px;
   max-height: 570px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .videoButtonsWrap {
@@ -260,4 +269,39 @@
 
 .videoDisplayStat {
   width: 200px;
+}
+
+.outboundCallPopUp {
+  width: 600px;
+  height: 230px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary_colour);
+  justify-content: center;
+  border: 2px solid var(--secondary_colour);
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 98%;
+}
+
+.outboundCallPopUp b {
+  flex: 2;
+  font-size: calc(20px);
+  justify-content: center;
+  display: flex;
+  margin-top: 70px;
+  color: var(--light_text_colour);
+}
+
+.outboundCallPopUp button {
+  background-color: red;
+  margin-left: auto;
+  margin-right: auto;
+  width: 250px;
+  border-radius: 10px;
+  color: var(--light_text_colour);
+  height: 45px;
+  font-size: calc(20px);
+  margin-bottom: 20px;
 }
