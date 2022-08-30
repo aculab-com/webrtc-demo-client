@@ -11,7 +11,7 @@
 .App-header {
   background-color: #282c34;
   height: 100px;
-  width: 100vw;
+  width: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -143,7 +143,7 @@
   margin-inline: 10px;
 }
 
-.videoButton:hover {
+.videoButton:hover:enabled {
   box-shadow: 5px 5px var(--shadow_colour);
   background-color: var(--input_hover_colour);
   cursor: pointer;

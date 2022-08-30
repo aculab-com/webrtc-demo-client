@@ -170,6 +170,7 @@ export const VideoCall = (props: VideoCallProps) => {
       <div className="videoButtonsWrap">
         <button
           className="videoButton"
+          disabled={webRtcStatus !== 'connected' ? true : false}
           onClick={() => {
             console.log('mute video pressed');
             mute_call(props.call, 'video');
@@ -179,6 +180,7 @@ export const VideoCall = (props: VideoCallProps) => {
         </button>
         <button
           className="videoButton"
+          disabled={webRtcStatus !== 'connected' ? true : false}
           onClick={() => {
             console.log('mute audio pressed');
             mute_call(props.call, 'audio');
@@ -189,6 +191,11 @@ export const VideoCall = (props: VideoCallProps) => {
         <button
           className="videoButton"
           style={{ backgroundColor: 'red' }}
+          disabled={
+            webRtcStatus === 'idle' || webRtcStatus === 'connecting'
+              ? true
+              : false
+          }
           onClick={() => {
             console.log('incoming call rejected');
             handle_disconnect(props.call);

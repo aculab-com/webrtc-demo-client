@@ -119,6 +119,7 @@ export const CallComponent = (props: CallCompProps) => {
     setPlayRing(true);
 
     // Send ringing notification to the caller
+    obj.call.onDisconnect = callDisconnected;
     obj.call.ringing();
     setCall(obj.call);
   }
@@ -130,12 +131,13 @@ export const CallComponent = (props: CallCompProps) => {
       caller: (user as User).username,
       callee: callee,
     };
-    setOutboundCall(data as OutboundCall);
     socket.emit('call_notification', data, (response: string) => {
-      if (response !== 'success') {
-        alert(response);
-      } else {
+      if (response === 'success') {
         setOutboundCall(data as OutboundCall);
+      } else if (response === 'calling_web_interface') {
+        placeCall('client', data.callee);
+      } else {
+        alert(response);
       }
     });
   }
@@ -149,18 +151,30 @@ export const CallComponent = (props: CallCompProps) => {
   }
 
   function placeCall(type: 'client' | 'service', callee: string) {
-    let newCall;
+    let newOutboundCall;
     console.log('placeCall');
     switch (type) {
       case 'client':
-        newCall = client.callClient(callee, user?.webrtcToken, callOptions);
+        newOutboundCall = client.callClient(
+          callee,
+          user?.webrtcToken,
+          callOptions
+        );
         break;
       case 'service':
-        newCall = client.callService(callee);
+        newOutboundCall = client.callService(callee);
     }
     setDisplayVideo(true);
     setOutboundCall(null);
-    setCall(newCall);
+    setCall(newOutboundCall);
+  }
+
+  function callDisconnected(obj: any) {
+    console.log('callDisconnected', obj);
+    if (obj.cause !== 'NORMAL') {
+      alert(`Client: ${obj.cause}`);
+    }
+    stopCall(obj.call, false);
   }
 
   const CallDisplay = ({ callingId = '' }) => {
