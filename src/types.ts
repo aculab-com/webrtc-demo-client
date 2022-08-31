@@ -83,6 +83,16 @@ export type CallCompProps = {
   socket: Socket;
   client: any;
   user: User | undefined;
+  setPlayRing: React.Dispatch<React.SetStateAction<boolean>>;
+  setPlayRingback: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type VideoCallProps = {
+  call: Call;
+  callingUser: string;
+  setDisplayVideo: React.Dispatch<React.SetStateAction<boolean>>;
+  setCall: React.Dispatch<Call | undefined>;
+  setPlayRingback: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type RegisterProps = {

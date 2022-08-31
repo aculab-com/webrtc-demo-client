@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import ringing from '../media/ringing.wav';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// import ringback from '../media/ringback.wav';
 import {
   Call,
   CallCompProps,
@@ -22,7 +16,6 @@ export const CallComponent = (props: CallCompProps) => {
   const [callerId, setCallerId] = useState('');
   const [callingId, setCallingId] = useState('');
   const [displayVideo, setDisplayVideo] = useState(false);
-  const [playRing, setPlayRing] = useState(false);
   const [call, setCall] = useState<Call>();
   const [outboundCall, setOutboundCall] = useState<OutboundCall | null>(null);
 
@@ -57,6 +50,7 @@ export const CallComponent = (props: CallCompProps) => {
         }
       } else if (data.call_rejected && !displayVideo) {
         setOutboundCall(null);
+        props.setPlayRingback(false);
       } else {
         // Android requires slight delay to prevent connection issues
         // when connection is being establish
@@ -73,18 +67,10 @@ export const CallComponent = (props: CallCompProps) => {
   }, [call, displayVideo]);
 
   useEffect(() => {
-    const player = document.getElementById('ringPlayer') as HTMLAudioElement;
-    player.loop = true;
-    player.src = ringing;
-    player.load();
-    if (player && playRing) {
-      player.play().catch((err) => {
-        console.log('Play ringing error:', err);
-      });
-    } else {
-      player.pause();
+    if (!displayVideo && outboundCall) {
+      props.setPlayRingback(true);
     }
-  }, [playRing]);
+  }, [displayVideo, outboundCall]);
 
   function incomingState(state: undefined) {
     console.log('incomingState', state);
@@ -95,7 +81,7 @@ export const CallComponent = (props: CallCompProps) => {
     call.answer(callOptions);
     setDisplayIncomingUi(false);
     setDisplayVideo(true);
-    setPlayRing(false);
+    props.setPlayRing(false);
   }
 
   function stopCall(call: Call, rejected: boolean) {
@@ -107,7 +93,8 @@ export const CallComponent = (props: CallCompProps) => {
       console.log('call disconnected');
     }
     setDisplayIncomingUi(false);
-    setPlayRing(false);
+    props.setPlayRing(false);
+    props.setPlayRingback(false);
     setCallerId('');
     setCall(undefined);
     setOutboundCall(null);
@@ -116,7 +103,7 @@ export const CallComponent = (props: CallCompProps) => {
   function newCall(obj: InboundCallObj) {
     setCallerId(obj.from);
     setDisplayIncomingUi(true);
-    setPlayRing(true);
+    props.setPlayRing(true);
 
     // Send ringing notification to the caller
     obj.call.onDisconnect = callDisconnected;
@@ -172,7 +159,7 @@ export const CallComponent = (props: CallCompProps) => {
   function callDisconnected(obj: any) {
     console.log('callDisconnected', obj);
     if (obj.cause !== 'NORMAL') {
-      alert(`Client: ${obj.cause}`);
+      alert(`Call disconnected - reason: ${obj.cause}`);
     }
     stopCall(obj.call, false);
   }
@@ -271,6 +258,7 @@ export const CallComponent = (props: CallCompProps) => {
           onClick={() => {
             cancelCallNotification(outboundCall as OutboundCall);
             setOutboundCall(null);
+            props.setPlayRingback(false);
           }}
         >
           Hang Up
@@ -282,7 +270,6 @@ export const CallComponent = (props: CallCompProps) => {
   return (
     <div>
       <IncomingPopUp caller={callerId} />
-      <audio id="ringPlayer" />
       {!displayVideo ? (
         !outboundCall ? (
           <CallDisplay callingId={callingId} />
@@ -295,6 +282,7 @@ export const CallComponent = (props: CallCompProps) => {
           callingUser={!callerId ? callingId : callerId}
           setDisplayVideo={setDisplayVideo}
           setCall={setCall}
+          setPlayRingback={props.setPlayRingback}
         />
       )}
     </div>

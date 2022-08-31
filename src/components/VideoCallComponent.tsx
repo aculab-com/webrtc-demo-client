@@ -1,19 +1,6 @@
-import { useEffect, useState } from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// import ringing from '../media/ringing.wav';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// import ringback from '../media/ringback.wav';
+import { useState } from 'react';
 import video_placeholder from '../media/video_placeholder.png';
-import { Call, WebRtcStatus } from '../types';
-
-type VideoCallProps = {
-  call: Call;
-  callingUser: string;
-  setDisplayVideo: React.Dispatch<React.SetStateAction<boolean>>;
-  setCall: React.Dispatch<Call | undefined>;
-};
+import { Call, VideoCallProps, WebRtcStatus } from '../types';
 
 export const VideoCall = (props: VideoCallProps) => {
   const [localAudioMuted, setLocalAudioMuted] = useState(false);
@@ -64,13 +51,15 @@ export const VideoCall = (props: VideoCallProps) => {
 
   function connected(obj: any) {
     console.log('connected', obj);
+    props.setPlayRingback(false);
     setWebRtcStatus('connected');
   }
 
   function callDisconnected(obj: any) {
     console.log('callDisconnected', obj);
+    props.setPlayRingback(false);
     if (obj.cause !== 'NORMAL') {
-      alert(`Client: ${obj.cause}`);
+      alert(`Call disconnected - reason: ${obj.cause}`);
     }
     handle_disconnect(props.call);
   }
@@ -118,23 +107,6 @@ export const VideoCall = (props: VideoCallProps) => {
     setRemoteVideoMuted(false);
     console.log('onRemoteVideoUnMute', remoteVideoMuted);
   }
-
-  useEffect(() => {
-    // play when outbound call
-    // if (displayVideo) {
-    //   const player = document.getElementById('player') as HTMLAudioElement;
-    //   if (player.canPlayType('audio/wav')) {
-    //     player.loop = true;
-    //     player.src = ringback;
-    //     player.load();
-    //     player.play().catch((err) => {
-    //       console.log('Play ringback error:', err);
-    //     });
-    //   } else {
-    //     // Browser can't play audio/wav
-    //   }
-    // }
-  }, []);
 
   function mute_call(call: Call, mute: 'audio' | 'video') {
     switch (mute) {

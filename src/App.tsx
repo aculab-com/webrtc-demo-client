@@ -7,6 +7,13 @@ import { RegisterComponent } from './components/RegisterComponent';
 import { CallComponent } from './components/CallComponent';
 import { unRegResponse, User } from './types';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import ringing from './media/ringing.wav';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import ringback from './media/ringback.wav';
+
 const SOCKET_CONNECT_URL = 'http://localhost:3500';
 let socket: Socket;
 
@@ -14,6 +21,8 @@ function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [client, setClient] = useState<any>();
   const [user, setUser] = useState<User>();
+  const [playRing, setPlayRing] = useState(false);
+  const [playRingback, setPlayRingback] = useState(false);
 
   // create socket
   if (!socket) {
@@ -38,6 +47,26 @@ function App() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const player = document.getElementById('ringPlayer') as HTMLAudioElement;
+    player.loop = true;
+    if (player && playRing) {
+      player.src = ringing;
+      player.load();
+      player.play().catch((err) => {
+        console.log('Play ringing error:', err);
+      });
+    } else if (player && playRingback) {
+      player.src = ringback;
+      player.load();
+      player.play().catch((err) => {
+        console.log('Play ringing error:', err);
+      });
+    } else {
+      player.pause();
+    }
+  }, [playRing, playRingback]);
+
   function unregister() {
     if (client) {
       client.disableIncoming();
@@ -57,6 +86,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1 className="App-title">Aculab WebRTC Demo</h1>
+        <audio id="ringPlayer" />
         {!client ? (
           <div>
             <b>Registration</b>
@@ -73,7 +103,13 @@ function App() {
       {!client ? (
         <RegisterComponent socket={socket} setUser={setUser} />
       ) : (
-        <CallComponent socket={socket} client={client} user={user} />
+        <CallComponent
+          socket={socket}
+          client={client}
+          user={user}
+          setPlayRing={setPlayRing}
+          setPlayRingback={setPlayRingback}
+        />
       )}
     </div>
   );
