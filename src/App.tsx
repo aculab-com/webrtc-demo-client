@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import AculabCloudClient from 'aculab-webrtc';
-import './App.css';
 
+import './App.css';
 import { RegisterComponent } from './components/RegisterComponent';
 import { CallComponent } from './components/CallComponent';
 import { unRegResponse, User } from './types';
@@ -14,9 +14,16 @@ import ringing from './media/ringing.wav';
 // @ts-ignore
 import ringback from './media/ringback.wav';
 
+/**
+ * constant holding url to server for socket.io communication
+ */
 const SOCKET_CONNECT_URL = 'http://localhost:3500';
 let socket: Socket;
 
+/**
+ * main application
+ * @returns component
+ */
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [client, setClient] = useState<any>();
@@ -29,6 +36,7 @@ function App() {
     socket = io(SOCKET_CONNECT_URL);
   }
 
+  // create AculabCloudClient instance for WebRTC use
   useEffect(() => {
     // server response to registering new user
     if (user && !client) {
@@ -47,29 +55,37 @@ function App() {
     }
   }, [user]);
 
+  // handles ringing and ringback
   useEffect(() => {
     const player = document.getElementById('ringPlayer') as HTMLAudioElement;
     player.loop = true;
     if (player && playRing) {
+      // inbound call
       player.src = ringing;
       player.load();
       player.play().catch((err) => {
-        console.log('Play ringing error:', err);
+        console.error('Play ringing error:', err);
       });
     } else if (player && playRingback) {
+      // outbound call
       player.src = ringback;
       player.load();
       player.play().catch((err) => {
-        console.log('Play ringing error:', err);
+        console.error('Play ringing error:', err);
       });
     } else {
       player.pause();
     }
   }, [playRing, playRingback]);
 
+  /**
+   * unregister client locally and on the server.\
+   * it uses socket to delete registered user from the server.
+   */
   function unregister() {
     if (client) {
       client.disableIncoming();
+      // emit to server via socket
       socket.emit(
         'unregister_user',
         user?.username,

@@ -1,4 +1,8 @@
-export function generateUUID() {
+/**
+ * Generated random UUID using time and date
+ * @returns {string} uuid
+ */
+export const generateUUID = () => {
   // Public Domain/MIT
   let d = new Date().getTime(); //Timestamp
   let d2 =
@@ -19,7 +23,7 @@ export function generateUUID() {
     }
     return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
   });
-}
+};
 
 /**
  * Convert first letter to upper case

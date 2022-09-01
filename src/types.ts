@@ -1,18 +1,33 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Socket } from 'socket.io-client';
 
 export type IncomingCall = {
   caller: string;
 };
 
-export type User = {
+export type WebRtcStatus =
+  | 'idle'
+  | 'gotMedia'
+  | 'connecting'
+  | 'connected'
+  | 'calling'
+  | 'ringing';
+
+export type RegResponse =
+  | { status: 'userCreated'; data: User }
+  | { status: 'error'; data: { message: string } };
+
+export interface User {
   username: string;
   webrtcToken: string;
   webrtcAccessKey: string;
   cloudRegionId: string;
   logLevel: string | number;
-};
+}
 
-export type Client = {
+export interface Client {
   _aculabIceServers: Array<Record<string, unknown>>;
   _calls: Set<[]>;
   _clientId: string;
@@ -28,16 +43,13 @@ export type Client = {
   _webRtcAccessKey: string;
   iceServers: any;
   loglevel: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
   makeOutgoing: Function;
   maxConcurrent: number;
-  // eslint-disable-next-line @typescript-eslint/ban-types
   onIncoming: Function;
-  // eslint-disable-next-line @typescript-eslint/ban-types
   onIncomingState: Function;
-};
+}
 
-export type Call = {
+export interface Call {
   [x: string]: any;
   _callId: string;
   _connected: boolean;
@@ -59,9 +71,9 @@ export type Call = {
   onLocalVideoUnmute: () => void;
   onRemoteVideoMute: () => void;
   onRemoteVideoUnmute: () => void;
-};
+}
 
-export type InboundCallObj = {
+export interface InboundCallObj {
   call: Call;
   from: string;
   type: 'client' | 'service';
@@ -69,40 +81,28 @@ export type InboundCallObj = {
   offeringVideo: boolean;
   canReceiveAudio: boolean;
   canReceiveVideo: boolean;
-};
+}
 
-export type WebRtcStatus =
-  | 'idle'
-  | 'gotMedia'
-  | 'connecting'
-  | 'connected'
-  | 'calling'
-  | 'ringing';
-
-export type CallCompProps = {
+export interface CallCompProps {
   socket: Socket;
   client: any;
   user: User | undefined;
   setPlayRing: React.Dispatch<React.SetStateAction<boolean>>;
   setPlayRingback: React.Dispatch<React.SetStateAction<boolean>>;
-};
+}
 
-export type VideoCallProps = {
+export interface VideoCallProps {
   call: Call;
   callingUser: string;
   setDisplayVideo: React.Dispatch<React.SetStateAction<boolean>>;
   setCall: React.Dispatch<Call | undefined>;
   setPlayRingback: React.Dispatch<React.SetStateAction<boolean>>;
-};
+}
 
-export type RegisterProps = {
+export interface RegisterProps {
   socket: Socket;
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
-};
-
-export type RegResponse =
-  | { status: 'userCreated'; data: User }
-  | { status: 'error'; data: { message: string } };
+}
 
 export interface unRegResponse {
   status: 'error' | 'deleted';

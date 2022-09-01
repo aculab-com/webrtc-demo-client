@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { RegisterProps, RegResponse, User } from '../types';
 import { capitalizeFirstLetter } from './helperFunctions';
 
+/**
+ * Register component
+ * @param {RegisterProps} props object with parameters socket and setUser
+ * @returns component
+ */
 export const RegisterComponent = (props: RegisterProps) => {
   const [username, setUsername] = useState('');
   const [registerPressed, setRegisterPressed] = useState(false);
@@ -9,22 +14,22 @@ export const RegisterComponent = (props: RegisterProps) => {
 
   const socket = props.socket;
 
+  /**
+   * Register client on the server via socket
+   * @param {string} username client name to register in server db and WebRTC
+   * @param {string | number} logLevel number 0-6: 0 = no log, 6 = log everything
+   */
   function register(username: string, logLevel: string) {
-    if (username) {
-      const data = { username: username, logLevel: logLevel };
-      // console.log('registering user:', data);
-      socket.emit('register', data, (response: RegResponse) => {
-        // console.log('direct register response', response);
-        switch (response.status) {
-          case 'userCreated':
-            props.setUser(response.data as User);
-            // console.log('user registered', response.data);
-            break;
-          case 'error':
-            setWarningMessage(capitalizeFirstLetter(response.data.message));
-        }
-      });
-    }
+    const data = { username: username, logLevel: logLevel };
+    socket.emit('register', data, (response: RegResponse) => {
+      switch (response.status) {
+        case 'userCreated':
+          props.setUser(response.data as User);
+          break;
+        case 'error':
+          setWarningMessage(capitalizeFirstLetter(response.data.message));
+      }
+    });
   }
 
   return (

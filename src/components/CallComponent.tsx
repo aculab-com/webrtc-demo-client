@@ -11,6 +11,11 @@ import {
 import { generateUUID } from './helperFunctions';
 import { VideoCall } from './VideoCallComponent';
 
+/**
+ * Component to place a call to client or server
+ * @param {CallCompProps} props object with properties socket, client, user, setPlayRing, setPlayRingback
+ * @returns component
+ */
 export const CallComponent = (props: CallCompProps) => {
   const [displayIncomingUi, setDisplayIncomingUi] = useState(false);
   const [callerId, setCallerId] = useState('');
@@ -30,28 +35,33 @@ export const CallComponent = (props: CallCompProps) => {
   const socket = props.socket;
   const user = props.user;
   const client = props.client;
-  client.onIncoming = newCall;
+
+  client.onIncoming = newIncomingCall;
   client.onIncomingState = incomingState;
 
+  // Handle response to silent notifications sent from server via socket
   useEffect(() => {
-    // make sure no more that one listener for silent_notification
+    // Make sure no more that one listener for silent_notification
     socket.removeListener('silent_notification');
 
     socket.on('silent_notification', async (data) => {
-      console.log('silent notification data', data);
       if (call) {
         if (data.webrtc_ready) {
+          // Do not place second call if a call is in progress
           console.log('only one call allowed');
         } else if (
           (data.call_cancelled || data.call_rejected) &&
           !displayVideo
         ) {
+          // Call cancelled or rejected remotely
           stopCall(call, false);
         }
       } else if (data.call_rejected && !displayVideo) {
+        // Call rejected before WebRTC communication was established
         setOutboundCall(null);
         props.setPlayRingback(false);
       } else {
+        // Start a call
         // Android requires slight delay to prevent connection issues
         // when connection is being establish
         setTimeout(() => {
@@ -59,38 +69,46 @@ export const CallComponent = (props: CallCompProps) => {
         }, 200);
       }
     });
-
-    console.log(
-      'socket.on silent_notification listeners',
-      socket.listeners('silent_notification').length
-    );
   }, [call, displayVideo]);
 
+  // Play ringback on outgoing call when WebRTC connection is established
+  // but call has not been accepted yet
   useEffect(() => {
     if (!displayVideo && outboundCall) {
       props.setPlayRingback(true);
     }
   }, [displayVideo, outboundCall]);
 
+  /**
+   * Use for client.onIncomingState\
+   * print out incoming state object
+   * @param state object of incoming state
+   */
   function incomingState(state: undefined) {
     console.log('incomingState', state);
   }
 
+  /**
+   * Answer incoming WebRTC call
+   * @param {Call} call call object
+   */
   function answerCall(call: Call) {
-    console.log('accepting inbound');
     call.answer(callOptions);
     setDisplayIncomingUi(false);
     setDisplayVideo(true);
     props.setPlayRing(false);
   }
 
+  /**
+   * Reject/Disconnect WebRTC call
+   * @param {Call} call call object to be stopped/rejected
+   * @param {boolean} rejected if true, call is rejected. Else it is disconnected
+   */
   function stopCall(call: Call, rejected: boolean) {
     if (rejected) {
       call.reject(486);
-      console.log('rejected the call');
     } else {
       call.disconnect();
-      console.log('call disconnected');
     }
     setDisplayIncomingUi(false);
     props.setPlayRing(false);
@@ -100,7 +118,11 @@ export const CallComponent = (props: CallCompProps) => {
     setOutboundCall(null);
   }
 
-  function newCall(obj: InboundCallObj) {
+  /**
+   * handle new incoming call
+   * @param {InboundCallObj} obj inbound call object
+   */
+  function newIncomingCall(obj: InboundCallObj) {
     setCallerId(obj.from);
     setDisplayIncomingUi(true);
     props.setPlayRing(true);
@@ -111,6 +133,14 @@ export const CallComponent = (props: CallCompProps) => {
     setCall(obj.call);
   }
 
+  /**
+   * Send call notification via socket\
+   * Socket response:\
+   * 'success' - means callee is mobile phone and notification was successfully sent\
+   * 'calling_web_interface' - means callee is web browser\
+   * any other response is a problem and it is displayed as alert message
+   * @param {string} callee client to receive the call notification
+   */
   function sendCallNotification(callee: string) {
     const uuid = generateUUID();
     const data = {
@@ -120,15 +150,24 @@ export const CallComponent = (props: CallCompProps) => {
     };
     socket.emit('call_notification', data, (response: string) => {
       if (response === 'success') {
+        // calling mobile platform prepare outboundCall object
         setOutboundCall(data as OutboundCall);
       } else if (response === 'calling_web_interface') {
+        // calling web browser, place a call do not wait conforming notification
         placeCall('client', data.callee);
       } else {
+        // problem occurred
         alert(response);
       }
     });
   }
 
+  /**
+   * Send a notification via socket to cancel outbound call\
+   * This is needed in case a mobile device received notification of incoming call but WebRTC
+   * connection was not been established yet.
+   * @param {OutboundCall} outboundCall outbound call object with parameters uuid, caller, callee
+   */
   function cancelCallNotification(outboundCall: OutboundCall) {
     const data = outboundCall;
     data.call_cancelled = true;
@@ -137,9 +176,13 @@ export const CallComponent = (props: CallCompProps) => {
     });
   }
 
+  /**
+   * Creates a new call to Client or service
+   * @param {'client' | 'service'} type to be called, options are client or service
+   * @param {string} callee client or service name to call
+   */
   function placeCall(type: 'client' | 'service', callee: string) {
     let newOutboundCall;
-    console.log('placeCall');
     switch (type) {
       case 'client':
         newOutboundCall = client.callClient(
@@ -156,14 +199,25 @@ export const CallComponent = (props: CallCompProps) => {
     setCall(newOutboundCall);
   }
 
+  /**
+   * Use for call.onDisconnect\
+   * It stops a call from the parameter disconnected object\
+   * If cause of disconnecting differs from NORMAL an alert message with cause is displayed
+   * @param obj onDisconnect object
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function callDisconnected(obj: any) {
-    console.log('callDisconnected', obj);
     if (obj.cause !== 'NORMAL') {
       alert(`Call disconnected - reason: ${obj.cause}`);
     }
     stopCall(obj.call, false);
   }
 
+  /**
+   * CallDisplay component allows to place a call to user or service
+   * @param {string} param0 an object with parameter callingId: string default name to be in Call ID field
+   * @returns component
+   */
   const CallDisplay = ({ callingId = '' }) => {
     const [callId, setCallId] = useState(callingId);
     const [callPressed, setCallPressed] = useState(false);
@@ -213,6 +267,12 @@ export const CallComponent = (props: CallCompProps) => {
     );
   };
 
+  /**
+   * Incoming call component\
+   * Displayed on incoming Call
+   * @param {IncomingCall} props an object with parameter caller: string
+   * @returns component
+   */
   const IncomingPopUp = (props: IncomingCall) => {
     return (
       <div
@@ -230,7 +290,6 @@ export const CallComponent = (props: CallCompProps) => {
             className="incomingCallButton"
             style={{ backgroundColor: 'green' }}
             onClick={() => {
-              console.log('incoming call accepted');
               answerCall(call as Call);
             }}
           >
@@ -250,6 +309,12 @@ export const CallComponent = (props: CallCompProps) => {
     );
   };
 
+  /**
+   * Displays component for when outbound call was triggered but WebRTC connection not established
+   * it allows cancel the outbound call
+   * @param {string} param0 an object with parameter callingId: string. Callee to be displayed
+   * @returns component
+   */
   const OutboundCall = ({ callingId = '' }) => {
     return (
       <div className={'outboundCallPopUp'}>

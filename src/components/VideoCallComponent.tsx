@@ -2,29 +2,46 @@ import { useState } from 'react';
 import video_placeholder from '../media/video_placeholder.png';
 import { Call, VideoCallProps, WebRtcStatus } from '../types';
 
+/**
+ * Component to display client to client call and supports video
+ * @param {VideoCallProps} props takes object with properties call, callingUser, setDisplayVideo, setCall
+ * @returns component
+ */
 export const VideoCall = (props: VideoCallProps) => {
   const [localAudioMuted, setLocalAudioMuted] = useState(false);
   const [localVideoMuted, setLocalVideoMuted] = useState(false);
   const [remoteVideoMuted, setRemoteVideoMuted] = useState(false);
   const [webRtcStatus, setWebRtcStatus] = useState<WebRtcStatus>('idle');
 
+  // Set call callbacks
   props.call.onRinging = onRinging;
-  props.call.onDisconnect = callDisconnected;
+  props.call.onDisconnect = onDisconnect;
   props.call.onMedia = gotMedia;
-  props.call.onConnecting = connecting;
-  props.call.onConnected = connected;
+  props.call.onConnecting = onConnecting;
+  props.call.onConnected = onConnected;
   props.call.onLocalVideoMute = onLocalVideoMute;
   props.call.onLocalVideoUnMute = onLocalVideoUnMute;
   props.call.onRemoteVideoMute = onRemoteVideoMute;
   props.call.onRemoteVideoUnMute = onRemoteVideoUnMute;
 
+  /**
+   * Use for call.onRinging\
+   * It changes webrtcStatus to ringing
+   * @param obj onRinging object
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   function onRinging(obj: any) {
-    console.log('ringing', obj);
     setWebRtcStatus('ringing');
   }
 
-  function connecting(obj: any) {
-    console.log('connecting', obj);
+  /**
+   * Use for call.onConnecting\
+   * It changes webrtcStatus to connecting
+   * loads and plays local video/audio
+   * @param obj onConnecting object
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function onConnecting(obj: any) {
     setWebRtcStatus('connecting');
     const localPlayer = document.getElementById(
       'localPlayer'
@@ -36,36 +53,58 @@ export const VideoCall = (props: VideoCallProps) => {
     });
   }
 
+  /**
+   * Use for call.onMedia\
+   * It changes webrtcStatus to gotMedia
+   * loads and plays remote video/audio
+   * @param obj onMedia object
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function gotMedia(obj: any) {
-    console.log('gotMedia', obj);
     setWebRtcStatus('gotMedia');
     const player = document.getElementById('player') as HTMLVideoElement;
     if (player) {
       player.srcObject = obj.stream;
       player.load();
       player.play().catch((error) => {
-        console.log(error);
+        console.error(error);
       });
     }
   }
 
-  function connected(obj: any) {
-    console.log('connected', obj);
+  /**
+   * Use for call.onConnected\
+   * It changes webrtcStatus to connected
+   * stops ringback
+   * @param obj onConnected object
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  function onConnected(obj: any) {
     props.setPlayRingback(false);
     setWebRtcStatus('connected');
   }
 
-  function callDisconnected(obj: any) {
-    console.log('callDisconnected', obj);
+  /**
+   * Use for call.onDisconnect\
+   * Stops ringback and calls disconnectHandler\
+   * If cause of disconnecting differs from NORMAL an alert message with cause is displayed
+   * @param obj onDisconnect object
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function onDisconnect(obj: any) {
     props.setPlayRingback(false);
     if (obj.cause !== 'NORMAL') {
       alert(`Call disconnected - reason: ${obj.cause}`);
     }
-    handle_disconnect(props.call);
+    disconnectHandler(props.call);
   }
 
-  function handle_disconnect(call?: Call) {
-    console.log('handle disconnect call', call);
+  /**
+   * handles WebRTC call disconnecting\
+   * resets call, displayVideo and webRtcStatus states
+   * @param {Call} call call to be disconnected
+   */
+  function disconnectHandler(call?: Call) {
     if (call) {
       call.disconnect();
     }
@@ -89,7 +128,6 @@ export const VideoCall = (props: VideoCallProps) => {
   function onLocalVideoUnMute() {
     setLocalVideoMuted(false);
     console.log('onLocalVideoUnMute', localVideoMuted);
-    // console.log('call', call);
   }
 
   /**
@@ -108,6 +146,11 @@ export const VideoCall = (props: VideoCallProps) => {
     console.log('onRemoteVideoUnMute', remoteVideoMuted);
   }
 
+  /**
+   * mute audio or video on existing call
+   * @param {Call} call call to be muted
+   * @param {'audio' | 'video'} mute defines if to mute audio or video
+   */
   function mute_call(call: Call, mute: 'audio' | 'video') {
     switch (mute) {
       case 'audio':
@@ -144,7 +187,6 @@ export const VideoCall = (props: VideoCallProps) => {
           className="videoButton"
           disabled={webRtcStatus !== 'connected' ? true : false}
           onClick={() => {
-            console.log('mute video pressed');
             mute_call(props.call, 'video');
           }}
         >
@@ -154,7 +196,6 @@ export const VideoCall = (props: VideoCallProps) => {
           className="videoButton"
           disabled={webRtcStatus !== 'connected' ? true : false}
           onClick={() => {
-            console.log('mute audio pressed');
             mute_call(props.call, 'audio');
           }}
         >
@@ -169,8 +210,7 @@ export const VideoCall = (props: VideoCallProps) => {
               : false
           }
           onClick={() => {
-            console.log('incoming call rejected');
-            handle_disconnect(props.call);
+            disconnectHandler(props.call);
           }}
         >
           Hang Up
