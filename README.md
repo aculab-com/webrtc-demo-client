@@ -1,6 +1,12 @@
-# Getting Started with Create React App
+# WebRTC Demo Client
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is written using Typescript and React. It is a browser run application to be user with [AculabCall-notification-server](https://github.com/aculab-com/AculabCall-notification-server).
+
+This app allows testing of calls client to client using notifications and demonstrates use of [aculab-webrtc](https://github.com/aculab-com/aculab-webrtc) in frontend application with implication of a server and notifications.
+
+This app uses sockets.io for two ways communication with AculabCall-notification-server.
+
+**For correct operating, the AculabCall-notification-server must be running.**
 
 ## Install
 
@@ -13,6 +19,116 @@ npm install
 ## Connect to server using sockets
 
 In app.tsx file change SOCKET_CONNECT_URL to your server url:port e.g. 'http://localhost:3500'
+
+## Sockets data
+
+### Emit data
+
+example of emitting data:
+
+```ts
+socket.emit(
+  'unregister_user',
+  user?.username,
+  (response: unRegResponse) => {
+    console.log('unregister user response', response);
+  }
+);
+```
+
+#### register
+
+argument: an object {username: string, logLevel: string}  
+callback:  
+if error returns an object
+
+```ts
+{
+  status: 'error',
+  data: {
+    message: string
+  }
+}
+```
+
+if success returns an object
+
+```ts
+{
+  status: 'userCreated',
+  data: {
+    username: string,
+    webrtcToken: string,
+    webrtcAccessKey: string,
+    cloudRegionId: string,
+    logLevel: string
+  }
+}
+```
+
+#### unregister_user
+
+argument: username as string  
+callback: returns an object
+
+```ts
+{
+  status: string,
+  message: string
+}
+```
+
+#### call_notification
+
+argument: an object
+
+```ts
+{
+  uuid: string,
+  caller: string,
+  callee: string,
+}
+```
+
+callback: returns a string
+
+#### call_canceled
+
+argument: an object
+
+```ts
+{
+  uuid: string,
+  caller: string,
+  callee: string,
+  call_cancelled: boolean
+}
+```
+
+callback: returns an object
+
+```ts
+{
+  message: string
+}
+```
+
+### Receive data
+
+#### silent_notification
+
+receiving data: an object
+
+```ts
+{
+  uuid: string,
+  caller: string,
+  callee: string,
+  webrtc_ready?: string,
+  call_rejected?: string,
+  call_cancelled?: string,
+}
+```
 
 ## Available Scripts
 
@@ -36,18 +152,26 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## License
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+MIT
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Copyright (c) 2022 Aculab
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

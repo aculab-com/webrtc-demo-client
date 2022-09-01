@@ -17,7 +17,7 @@ export const RegisterComponent = (props: RegisterProps) => {
   /**
    * Register client on the server via socket
    * @param {string} username client name to register in server db and WebRTC
-   * @param {string | number} logLevel number 0-6: 0 = no log, 6 = log everything
+   * @param {string} logLevel number 0-6: 0 = no log, 6 = log everything
    */
   function register(username: string, logLevel: string) {
     const data = { username: username, logLevel: logLevel };
