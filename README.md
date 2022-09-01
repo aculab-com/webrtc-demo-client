@@ -1,12 +1,12 @@
 # WebRTC Demo Client
 
-This project is written using Typescript and React. It is a browser run application to be user with [AculabCall-notification-server](https://github.com/aculab-com/AculabCall-notification-server).
+WebRTC Demo Client is a React application designed to be user with [AculabCall-notification-server](https://github.com/aculab-com/AculabCall-notification-server).
 
 This app allows testing of calls client to client using notifications and demonstrates use of [aculab-webrtc](https://github.com/aculab-com/aculab-webrtc) in frontend application with implication of a server and notifications.
 
-This app uses sockets.io for two ways communication with AculabCall-notification-server.
+This app uses sockets.io for communication with AculabCall-notification-server.
 
-**For correct operating, the AculabCall-notification-server must be running.**
+**This client requires the AculabCall-notification-server to be running.**
 
 ## Install
 
@@ -36,7 +36,7 @@ socket.emit(
 );
 ```
 
-#### register
+#### 'register'
 
 argument: an object {username: string, logLevel: string}  
 callback:  
@@ -66,7 +66,7 @@ if success returns an object
 }
 ```
 
-#### unregister_user
+#### 'unregister_user'
 
 argument: username as string  
 callback: returns an object
@@ -78,7 +78,7 @@ callback: returns an object
 }
 ```
 
-#### call_notification
+#### 'call_notification'
 
 argument: an object
 
@@ -92,7 +92,7 @@ argument: an object
 
 callback: returns a string
 
-#### call_canceled
+#### 'call_canceled'
 
 argument: an object
 
@@ -115,7 +115,23 @@ callback: returns an object
 
 ### Receive data
 
-#### silent_notification
+example of receiving data:
+
+```ts
+socket.on('silent_notification', async (data) => {
+  if (call) {
+    if (data.call_cancelled) {
+      // Call cancelled
+    } else if (data.call_rejected) {
+      // Call rejected
+    } else {
+      // Start a call
+    }
+  }
+});
+```
+
+#### 'silent_notification'
 
 receiving data: an object
 
