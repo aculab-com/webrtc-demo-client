@@ -9,6 +9,7 @@ import {
   User,
 } from '../types';
 import { generateUUID } from './helperFunctions';
+import { ServiceCall } from './ServiceCallComponent';
 import { VideoCall } from './VideoCallComponent';
 
 /**
@@ -23,6 +24,7 @@ export const CallComponent = (props: CallCompProps) => {
   const [displayVideo, setDisplayVideo] = useState(false);
   const [call, setCall] = useState<Call>();
   const [outboundCall, setOutboundCall] = useState<OutboundCall | null>(null);
+  const [serviceCall, setServiceCall] = useState(false);
 
   const callOptions = {
     constraints: {
@@ -38,6 +40,10 @@ export const CallComponent = (props: CallCompProps) => {
 
   client.onIncoming = newIncomingCall;
   client.onIncomingState = incomingState;
+
+  function playRingback(ring: boolean) {
+    props.setPlayRingback(ring);
+  }
 
   // Handle response to silent notifications sent from server via socket
   useEffect(() => {
@@ -59,7 +65,7 @@ export const CallComponent = (props: CallCompProps) => {
       } else if (data.call_rejected && !displayVideo) {
         // Call rejected before WebRTC communication was established
         setOutboundCall(null);
-        props.setPlayRingback(false);
+        playRingback(false);
       } else {
         // Start a call
         // Android requires slight delay to prevent connection issues
@@ -75,7 +81,7 @@ export const CallComponent = (props: CallCompProps) => {
   // but call has not been accepted yet
   useEffect(() => {
     if (!displayVideo && outboundCall) {
-      props.setPlayRingback(true);
+      playRingback(true);
     }
   }, [displayVideo, outboundCall]);
 
@@ -112,7 +118,7 @@ export const CallComponent = (props: CallCompProps) => {
     }
     setDisplayIncomingUi(false);
     props.setPlayRing(false);
-    props.setPlayRingback(false);
+    playRingback(false);
     setCallerId('');
     setCall(undefined);
     setOutboundCall(null);
@@ -219,7 +225,7 @@ export const CallComponent = (props: CallCompProps) => {
    * @returns component
    */
   const CallDisplay = ({ callingId = '' }) => {
-    const [callId, setCallId] = useState(callingId);
+    const [calleeId, setCalleeId] = useState(callingId);
     const [callPressed, setCallPressed] = useState(false);
 
     return (
@@ -229,12 +235,12 @@ export const CallComponent = (props: CallCompProps) => {
             id="callId"
             type="text"
             placeholder="Call ID..."
-            value={callId}
+            value={calleeId}
             onChange={(event) => {
-              setCallId(event.target.value);
+              setCalleeId(event.target.value);
             }}
           />
-          {!callId && callPressed ? (
+          {!calleeId && callPressed ? (
             <div>
               <b>Call ID is required</b>
             </div>
@@ -255,9 +261,9 @@ export const CallComponent = (props: CallCompProps) => {
           className="mainScreenButton"
           onClick={() => {
             setCallPressed(true);
-            if (callId) {
-              setCallingId(callId);
-              sendCallNotification(callId);
+            if (calleeId) {
+              // setCallingId(calleeId);
+              outboundCallHandler(calleeId);
             }
           }}
         >
@@ -266,6 +272,18 @@ export const CallComponent = (props: CallCompProps) => {
       </div>
     );
   };
+
+  function outboundCallHandler(calleeId: string) {
+    setCallingId(calleeId);
+    const callType = document.getElementById('callType') as HTMLSelectElement;
+    if (callType.value === 'client') {
+      sendCallNotification(calleeId);
+    } else {
+      placeCall('service', calleeId);
+      playRingback(true);
+      setServiceCall(true);
+    }
+  }
 
   /**
    * Incoming call component\
@@ -323,7 +341,7 @@ export const CallComponent = (props: CallCompProps) => {
           onClick={() => {
             cancelCallNotification(outboundCall as OutboundCall);
             setOutboundCall(null);
-            props.setPlayRingback(false);
+            playRingback(false);
           }}
         >
           Hang Up
@@ -341,11 +359,20 @@ export const CallComponent = (props: CallCompProps) => {
         ) : (
           <OutboundCall callingId={callingId} />
         )
-      ) : (
+      ) : !serviceCall ? (
         <VideoCall
           call={call as Call}
           callingUser={!callerId ? callingId : callerId}
           setDisplayVideo={setDisplayVideo}
+          setCall={setCall}
+          setPlayRingback={props.setPlayRingback}
+        />
+      ) : (
+        <ServiceCall
+          call={call as Call}
+          callingUser={!callerId ? callingId : callerId}
+          setDisplayVideo={setDisplayVideo}
+          setServiceCall={setServiceCall}
           setCall={setCall}
           setPlayRingback={props.setPlayRingback}
         />

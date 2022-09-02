@@ -255,8 +255,8 @@
   margin: 20px;
 }
 
-.videoDisplayStatsWrap {
-  margin-bottom: 20px;
+.statsWrap {
+  margin: 20px;
   display: flex;
   flex: 2;
   color: var(--secondary_colour);
@@ -267,8 +267,11 @@
   flex-direction: row;
 }
 
-.videoDisplayStat {
+.displayStat {
   width: 200px;
+  align-self: center;
+  display: flex;
+  justify-content: center;
 }
 
 .outboundCallPopUp {
@@ -304,4 +307,40 @@
   height: 45px;
   font-size: calc(20px);
   margin-bottom: 20px;
+}
+
+.serviceCallWrap {
+  border-radius: 10px;
+  margin-top: 20px;
+  display: flex;
+  flex: 2;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primary_colour);
+  transition: width 200ms;
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dialKeysWrap {
+  padding: 30px;
+}
+
+.dialKeysWrap button {
+  background-color: var(--primary_colour);
+  color: var(--light_text_colour);
+  width: 50px;
+  height: 50px;
+  margin: 10px;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 5px;
+}
+
+.dialKeysWrap button:hover:enabled {
+  box-shadow: 5px 5px var(--shadow_colour);
+  background-color: var(--input_hover_colour);
+  cursor: pointer;
 }

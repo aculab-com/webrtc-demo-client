@@ -91,10 +91,11 @@ export interface CallCompProps {
   setPlayRingback: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export interface VideoCallProps {
+export interface OutboundCallProps {
   call: Call;
   callingUser: string;
   setDisplayVideo: React.Dispatch<React.SetStateAction<boolean>>;
+  setServiceCall?: React.Dispatch<React.SetStateAction<boolean>>;
   setCall: React.Dispatch<Call | undefined>;
   setPlayRingback: React.Dispatch<React.SetStateAction<boolean>>;
 }

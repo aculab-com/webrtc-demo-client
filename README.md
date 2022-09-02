@@ -176,7 +176,7 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## Call browser app to mobile app workflow diagram
+## Browser app to mobile app call workflow diagram
 
 ![Call browser app to mobile app workflow diagram](/documentation/media/browser_to_mobile_notification_call_workflow.png)
 

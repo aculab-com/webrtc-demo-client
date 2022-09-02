@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import video_placeholder from '../media/video_placeholder.png';
-import { Call, VideoCallProps, WebRtcStatus } from '../types';
+import { Call, OutboundCallProps, WebRtcStatus } from '../types';
 
 /**
  * Component to display client to client call and supports video
- * @param {VideoCallProps} props takes object with properties call, callingUser, setDisplayVideo, setCall
+ * @param {OutboundCallProps} props takes object with properties call, callingUser, setDisplayVideo, setCall
  * @returns component
  */
-export const VideoCall = (props: VideoCallProps) => {
+export const VideoCall = (props: OutboundCallProps) => {
   const [localAudioMuted, setLocalAudioMuted] = useState(false);
   const [localVideoMuted, setLocalVideoMuted] = useState(false);
   const [remoteVideoMuted, setRemoteVideoMuted] = useState(false);
@@ -166,6 +166,14 @@ export const VideoCall = (props: VideoCallProps) => {
 
   return (
     <div className="videoDisplayWindow">
+      <div className="statsWrap">
+        <div className="displayStat">
+          <b>Calling: {props.callingUser}</b>
+        </div>
+        <div className="displayStat">
+          <b>Call Status: {webRtcStatus}</b>
+        </div>
+      </div>
       <div className="videoDisplayWrapper">
         <div className="videoDisplay">
           <video id="player" poster={video_placeholder}></video>
@@ -174,14 +182,14 @@ export const VideoCall = (props: VideoCallProps) => {
           <video id="localPlayer" poster={video_placeholder}></video>
         </div>
       </div>
-      <div className="videoDisplayStatsWrap">
-        <div className="videoDisplayStat">
+      {/* <div className="statsWrap">
+        <div className="displayStat">
           <b>Calling: {props.callingUser}</b>
         </div>
-        <div className="videoDisplayStat">
+        <div className="displayStat">
           <b>Call Status: {webRtcStatus}</b>
         </div>
-      </div>
+      </div> */}
       <div className="videoButtonsWrap">
         <button
           className="videoButton"
