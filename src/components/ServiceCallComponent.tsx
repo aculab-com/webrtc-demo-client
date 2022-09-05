@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { Call, OutboundCallProps } from '../types';
 
+/**
+ * Service call component
+ * @param {OutboundCallProps} props outbound call properties
+ * @returns component
+ */
 export const ServiceCall = (props: OutboundCallProps) => {
-  // export const ServiceCall = () => {
   const [buttonsDisabled, setButtonsDisabled] = useState(true);
 
   props.call.onMedia = gotMedia;
@@ -17,12 +21,19 @@ export const ServiceCall = (props: OutboundCallProps) => {
     props.setPlayRingback(ring);
   }
 
+  /**
+   * sets serviceCall state in parent component
+   * @param {boolean} isService true if service call else false
+   */
   function isServiceCall(isService: boolean) {
     if (props.setServiceCall) {
       props.setServiceCall(isService);
     }
   }
 
+  /**
+   * Set call states to default values
+   */
   function setDefault() {
     isServiceCall(false);
     props.setCall(undefined);
@@ -31,8 +42,7 @@ export const ServiceCall = (props: OutboundCallProps) => {
 
   /**
    * Use for call.onMedia\
-   * It changes webrtcStatus to gotMedia
-   * loads and plays remote video/audio
+   * loads and plays remote audio
    * @param obj onMedia object
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,6 +58,11 @@ export const ServiceCall = (props: OutboundCallProps) => {
     }
   }
 
+  /**
+   * Use for call.onConnected\
+   * Stop ringback + enable component buttons
+   * @param obj onConnected object
+   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   function onConnected(obj: any) {
     playRingback(false);
@@ -56,13 +71,13 @@ export const ServiceCall = (props: OutboundCallProps) => {
 
   /**
    * Use for call.onDisconnect\
-   * Stops ringback and calls disconnectHandler\
+   * Calls disconnectHandler\
    * If cause of disconnecting differs from NORMAL an alert message with cause is displayed
    * @param obj onDisconnect object
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function onDisconnect(obj: any) {
-    playRingback(false);
+    // playRingback(false);
     if (obj.cause !== 'NORMAL') {
       alert(`Call disconnected - reason: ${obj.cause}`);
     }
@@ -70,8 +85,8 @@ export const ServiceCall = (props: OutboundCallProps) => {
   }
 
   /**
-   * handles WebRTC call disconnecting\
-   * resets call, displayVideo and webRtcStatus states
+   * Handles WebRTC call disconnecting\
+   * Resets call, displayVideo and webRtcStatus states
    * @param {Call} call call to be disconnected
    */
   function disconnectHandler(call?: Call) {
