@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import video_placeholder from '../media/video_placeholder.png';
 import { Call, OutboundCallProps, WebRtcStatus } from '../types';
 
@@ -12,6 +12,7 @@ export const VideoCall = (props: OutboundCallProps) => {
   const [localVideoMuted, setLocalVideoMuted] = useState(false);
   const [remoteVideoMuted, setRemoteVideoMuted] = useState(false);
   const [webRtcStatus, setWebRtcStatus] = useState<WebRtcStatus>('idle');
+  const [localStream, setLocalStream] = useState();
 
   // Set call callbacks
   props.call.onRinging = onRinging;
@@ -20,9 +21,27 @@ export const VideoCall = (props: OutboundCallProps) => {
   props.call.onConnecting = onConnecting;
   props.call.onConnected = onConnected;
   props.call.onLocalVideoMute = onLocalVideoMute;
-  props.call.onLocalVideoUnMute = onLocalVideoUnMute;
+  props.call.onLocalVideoUnmute = onLocalVideoUnmute;
   props.call.onRemoteVideoMute = onRemoteVideoMute;
-  props.call.onRemoteVideoUnMute = onRemoteVideoUnMute;
+  props.call.onRemoteVideoUnmute = onRemoteVideoUnmute;
+
+  // loads and plays local video/audio
+  useEffect(() => {
+    const localPlayer = document.getElementById(
+      'localPlayer'
+    ) as HTMLVideoElement;
+    if (!localVideoMuted && localStream) {
+      localPlayer.srcObject = localStream;
+      localPlayer.load();
+      localPlayer.play().catch((err) => {
+        console.error(err);
+      });
+    } else {
+      localPlayer.pause();
+      localPlayer.srcObject = null;
+      localPlayer.load();
+    }
+  }, [localVideoMuted, localStream]);
 
   /**
    * Use for call.onRinging\
@@ -37,20 +56,12 @@ export const VideoCall = (props: OutboundCallProps) => {
   /**
    * Use for call.onConnecting\
    * It changes webrtcStatus to connecting
-   * loads and plays local video/audio
    * @param obj onConnecting object
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function onConnecting(obj: any) {
     setWebRtcStatus('connecting');
-    const localPlayer = document.getElementById(
-      'localPlayer'
-    ) as HTMLVideoElement;
-    localPlayer.srcObject = obj.stream;
-    localPlayer.load();
-    localPlayer.play().catch((err) => {
-      console.error(err);
-    });
+    setLocalStream(obj.stream);
   }
 
   /**
@@ -125,9 +136,9 @@ export const VideoCall = (props: OutboundCallProps) => {
   /**
    * Set state of local video mute to false
    */
-  function onLocalVideoUnMute() {
+  function onLocalVideoUnmute() {
     setLocalVideoMuted(false);
-    console.log('onLocalVideoUnMute', localVideoMuted);
+    console.log('onLocalVideoUnmute', localVideoMuted);
   }
 
   /**
@@ -141,9 +152,9 @@ export const VideoCall = (props: OutboundCallProps) => {
   /**
    * Set state of remote video mute to false
    */
-  function onRemoteVideoUnMute() {
+  function onRemoteVideoUnmute() {
     setRemoteVideoMuted(false);
-    console.log('onRemoteVideoUnMute', remoteVideoMuted);
+    console.log('onRemoteVideoUnmute', remoteVideoMuted);
   }
 
   /**
@@ -182,14 +193,6 @@ export const VideoCall = (props: OutboundCallProps) => {
           <video id="localPlayer" poster={video_placeholder}></video>
         </div>
       </div>
-      {/* <div className="statsWrap">
-        <div className="displayStat">
-          <b>Calling: {props.callingUser}</b>
-        </div>
-        <div className="displayStat">
-          <b>Call Status: {webRtcStatus}</b>
-        </div>
-      </div> */}
       <div className="videoButtonsWrap">
         <button
           className="videoButton"
