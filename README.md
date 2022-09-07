@@ -92,7 +92,7 @@ argument: an object
 
 callback: returns a string
 
-#### 'call_canceled'
+#### 'call_cancelled'
 
 argument: an object
 

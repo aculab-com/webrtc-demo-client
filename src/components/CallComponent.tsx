@@ -177,8 +177,8 @@ export const CallComponent = (props: CallCompProps) => {
   function cancelCallNotification(outboundCall: OutboundCall) {
     const data = outboundCall;
     data.call_cancelled = true;
-    socket.emit('call_canceled', data, (response: string) => {
-      console.log('call_canceled response', response);
+    socket.emit('call_cancelled', data, (response: string) => {
+      console.log('call_cancelled response', response);
     });
   }
 
